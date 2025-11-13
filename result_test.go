@@ -333,6 +333,48 @@ func TestError(t *testing.T) {
 	})
 }
 
+func TestUnwrapErr(t *testing.T) {
+	t.Run("returns error from Err result", func(t *testing.T) {
+		expectedErr := errors.New("test error")
+		result := Err[int](expectedErr)
+
+		got := result.UnwrapErr()
+
+		if got != expectedErr {
+			t.Errorf("UnwrapErr() = %v, want %v", got, expectedErr)
+		}
+	})
+
+	t.Run("returns nil from Ok result", func(t *testing.T) {
+		result := Ok(42)
+
+		got := result.UnwrapErr()
+
+		if got != nil {
+			t.Errorf("UnwrapErr() = %v, want nil", got)
+		}
+	})
+
+	t.Run("preserves error type", func(t *testing.T) {
+		customErr := &Error{
+			Kind:    KindValidation,
+			Op:      "test",
+			Message: "validation failed",
+		}
+		result := Err[string](customErr)
+
+		got := result.UnwrapErr()
+
+		var e *Error
+		if !errors.As(got, &e) {
+			t.Error("UnwrapErr() did not preserve error type")
+		}
+		if e.Kind != KindValidation {
+			t.Errorf("Kind = %v, want %v", e.Kind, KindValidation)
+		}
+	})
+}
+
 // ============================================================================
 // Context Builder Tests
 // ============================================================================

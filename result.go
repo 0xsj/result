@@ -99,6 +99,12 @@ func (r Result[T]) Error() error {
 	return r.err
 }
 
+// UnwrapErr returns the underlying error or nil if Ok.
+// This is the counterpart to Unwrap() for accessing the error.
+func (r Result[T]) UnwrapErr() error {
+	return r.err
+}
+
 // ============================================================================
 // Context Builders (Fluent API)
 // ============================================================================
