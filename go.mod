@@ -1,3 +1,3 @@
-module github.com/0xsj/fn-go
+module github.com/0xsj/result
 
-go 1.21.6
+go 1.25.4
