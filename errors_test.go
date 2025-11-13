@@ -137,7 +137,7 @@ func TestDomain(t *testing.T) {
 }
 
 func TestValidation(t *testing.T) {
-	meta := map[string]interface{}{
+	meta := map[string]any{
 		"field": "email",
 		"value": "invalid",
 	}
@@ -373,14 +373,14 @@ func TestMetaOf(t *testing.T) {
 	tests := []struct {
 		name     string
 		err      error
-		expected map[string]interface{}
+		expected map[string]any
 	}{
 		{
 			name: "result.Error with Meta",
-			err: Validation("test", "message", map[string]interface{}{
+			err: Validation("test", "message", map[string]any{
 				"field": "email",
 			}),
-			expected: map[string]interface{}{
+			expected: map[string]any{
 				"field": "email",
 			},
 		},
@@ -456,7 +456,7 @@ func TestWrap(t *testing.T) {
 	})
 
 	t.Run("wrap preserves metadata", func(t *testing.T) {
-		original := Validation("test", "message", map[string]interface{}{
+		original := Validation("test", "message", map[string]any{
 			"field": "email",
 		})
 		wrapped := Wrap(original, "Handler.Process")

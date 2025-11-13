@@ -48,10 +48,10 @@ func (k Kind) String() string {
 // Error represents a structured error with categorization and context
 type Error struct {
 	Kind    Kind
-	Op      string                 // Operation being performed
-	Err     error                  // Underlying error
-	Message string                 // User-facing message
-	Meta    map[string]interface{} // Additional metadata
+	Op      string         // Operation being performed
+	Err     error          // Underlying error
+	Message string         // User-facing message
+	Meta    map[string]any // Additional metadata
 }
 
 // Error implements the error interface
@@ -80,7 +80,7 @@ func Domain(op, message string) error {
 }
 
 // Validation creates a validation error with optional metadata
-func Validation(op, message string, meta map[string]interface{}) error {
+func Validation(op, message string, meta map[string]any) error {
 	return &Error{Kind: KindValidation, Op: op, Message: message, Meta: meta}
 }
 
@@ -146,7 +146,7 @@ func OpOf(err error) string {
 }
 
 // MetaOf returns the metadata from an error
-func MetaOf(err error) map[string]interface{} {
+func MetaOf(err error) map[string]any {
 	var e *Error
 	if errors.As(err, &e) {
 		return e.Meta
