@@ -250,9 +250,15 @@ func TestResultWithContext_EmptyContext(t *testing.T) {
 	r := Err[int](NotFound("test", "resource")).
 		WithContext(ctx)
 
-	// Should not panic, but also shouldn't add empty values
-	if r.meta != nil && len(r.meta) > 0 {
-		t.Error("WithContext should not add empty values")
+	if r.meta != nil {
+		hasValues := false
+		for range r.meta {
+			hasValues = true
+			break
+		}
+		if hasValues {
+			t.Error("WithContext should not add empty context values")
+		}
 	}
 }
 
