@@ -39,6 +39,13 @@ func (m MultiError) Unwrap() error {
 	return m.Errors[0]
 }
 
+// Validator is an interface that any Result can implement for validation purposes.
+// All Result[T] types automatically implement this interface.
+type Validator interface {
+	IsErr() bool
+	UnwrapErr() error
+}
+
 // ValidateAll validates multiple Results and collects ALL errors (not fail-fast).
 // Returns Ok with all values if all succeed, or Err with MultiError containing all failures.
 //
@@ -168,24 +175,17 @@ func ValidateField[T any](fieldName string, r Result[T]) Result[T] {
 }
 
 // ValidateStruct validates multiple fields of a struct and collects all errors.
+// Accepts any type that implements the Validator interface (which all Result[T] do).
 // Returns Ok if all validations pass, or Err with MultiError.
 //
 // Example:
 //
-//	type CreateUserInput struct {
-//	    Email    string
-//	    Username string
-//	    Password string
-//	}
-//
-//	func ValidateCreateUserInput(input CreateUserInput) result.Result[struct{}] {
-//	    return result.ValidateStruct(
-//	        result.ValidateField("email", domain.NewEmail(input.Email)),
-//	        result.ValidateField("username", domain.NewUsername(input.Username)),
-//	        result.ValidateField("password", domain.NewPassword(input.Password)),
-//	    )
-//	}
-func ValidateStruct(results ...Result[any]) Result[struct{}] {
+//	result.ValidateStruct(
+//	    result.ValidateField("email", domain.NewEmail(input.Email)),
+//	    result.ValidateField("username", domain.NewUsername(input.Username)),
+//	    result.ValidateField("password", domain.NewPassword(input.Password)),
+//	)
+func ValidateStruct(results ...Validator) Result[struct{}] {
 	var errors []error
 
 	for _, r := range results {
